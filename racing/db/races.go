@@ -2,13 +2,14 @@ package db
 
 import (
 	"database/sql"
-	"github.com/golang/protobuf/ptypes"
-	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"strings"
 	"sync"
 	"time"
 
-	"git.neds.sh/matty/entain/racing/proto/racing"
+	"github.com/golang/protobuf/ptypes"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/shyampundkar/entain-master/racing/proto/racing"
 )
 
 // RacesRepo provides repository access to races.
@@ -79,11 +80,34 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		}
 	}
 
+	// Get race visibility filter condition
+	raceFilter := getRaceVisibilityFilter(filter.OptionalRaceVisibility)
+	if len(raceFilter) != 0 {
+		// Keep condition to become part of Where clause later
+		clauses = append(clauses, raceFilter)
+	}
+
 	if len(clauses) != 0 {
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
 
 	return query, args
+}
+
+// Get race visibility filter criteria from the visibility
+func getRaceVisibilityFilter(race_visibility racing.ListRacesRequestFilter_Visibility) string {
+
+	switch race_visibility {
+	case racing.ListRacesRequestFilter_hidden:
+		return "visible = false"
+	case racing.ListRacesRequestFilter_visible:
+		return "visible = true"
+	case racing.ListRacesRequestFilter_show_all:
+		return ""
+	default:
+		log.Printf("invalid value for filter.RaceVisibility:%v, Type: %T\n", race_visibility, race_visibility)
+	}
+	return ""
 }
 
 func (m *racesRepo) scanRaces(

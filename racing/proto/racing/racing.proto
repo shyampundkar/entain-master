@@ -24,6 +24,18 @@ message ListRacesResponse {
 // Filter for listing races.
 message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
+  // Possible values for filtering races which are, visible, hidden or show all (default)
+  // enum approach is taken to detect value presence which is not possible with boolean
+  // as it has false as default value, the service does not know if it's client wants hidden 
+  // races or its just default false value. With show_all as default value, any other value 
+  // than show_all indicates that it has been set by client. 
+  enum Visibility {
+    show_all=0; // default
+    visible=1;
+    hidden=2;
+  }
+  //optional race visibilty field
+  Visibility optional_race_visibility = 2;  
 }
 
 /* Resources */

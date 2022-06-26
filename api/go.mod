@@ -1,12 +1,22 @@
-module git.neds.sh/matty/entain/api
+module github.com/shyampundkar/entain-master/api
 
-go 1.16
+go 1.18
 
 require (
-	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
-	google.golang.org/genproto v0.0.0-20210226172003-ab064af71705
-	google.golang.org/grpc v1.36.0
+	google.golang.org/genproto v0.0.0-20220624142145-8cd45d7dbd1f
+	google.golang.org/grpc v1.47.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0
-	google.golang.org/protobuf v1.25.1-0.20201208041424-160c7477e0e8
+	google.golang.org/protobuf v1.28.0
+)
+
+require (
+	github.com/ghodss/yaml v1.0.0 // indirect
+	github.com/golang/glog v1.0.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
+	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
+	golang.org/x/text v0.3.5 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

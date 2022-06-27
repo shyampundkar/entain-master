@@ -9,8 +9,20 @@ import (
 	"testing"
 )
 
-func Test_Race_Visibility(t *testing.T) {
-	visibilityFilter := getRaceVisibilityFilter(racing.ListRacesRequestFilter_hidden)
+func Test_Race_Visibility_Hidden(t *testing.T) {
+	visibilityFilter := getRaceVisibilityFilter(racing.ListRacesRequestFilter_HIDDEN)
 	visibilityClause := "visible = false"
+	assert.Equal(t, visibilityFilter, visibilityClause)
+}
+
+func Test_Race_Visibility_Visible(t *testing.T) {
+	visibilityFilter := getRaceVisibilityFilter(racing.ListRacesRequestFilter_VISIBLE)
+	visibilityClause := "visible = true"
+	assert.Equal(t, visibilityFilter, visibilityClause)
+}
+
+func Test_Race_Visibility(t *testing.T) {
+	visibilityFilter := getRaceVisibilityFilter(racing.ListRacesRequestFilter_SHOW_ALL)
+	visibilityClause := ""
 	assert.Equal(t, visibilityFilter, visibilityClause)
 }

@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 	"strconv"
 	"strings"
@@ -12,6 +11,8 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/shyampundkar/entain-master/racing/proto/racing"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -74,7 +75,8 @@ func (r *racesRepo) Get(request *racing.GetRaceRequest) (*racing.Race, error) {
 	}
 
 	if len(races) == 0 {
-		return nil, errors.New("race not found")
+
+		return nil, status.Error(codes.NotFound, "race not found")
 	}
 
 	return races[0], nil
@@ -141,6 +143,7 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	return query, args
 }
 
+// append where clauses to query
 func applyWhereClause(clauses []string, query string) string {
 
 	if len(clauses) != 0 {

@@ -1,6 +1,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/shyampundkar/entain-master/racing/proto/racing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,4 +34,16 @@ func Test_Race_ApplySortOrder(t *testing.T) {
 	actual := applyOrderBy(query, "advertised_start_time desc")
 	expected := query + " ORDER BY advertised_start_time desc"
 	assert.Equal(t, expected, actual)
+}
+
+func Test_Race_Status_Open(t *testing.T) {
+	pasttimestr := "2023-03-02T21:28:00Z"
+	tm, _ := time.Parse(time.RFC3339, pasttimestr)
+	raceStatus := getRaceStatus(tm)
+	assert.Equal(t, STATUS_OPEN, raceStatus)
+}
+
+func Test_Race_Status_Closed(t *testing.T) {
+	raceStatus := getRaceStatus(time.Now())
+	assert.Equal(t, STATUS_CLOSED, raceStatus)
 }

@@ -39,12 +39,12 @@ func Test_Race_ApplySortOrder(t *testing.T) {
 func Test_Race_Status_Open(t *testing.T) {
 	pasttimestr := "2023-03-02T21:28:00Z"
 	tm, _ := time.Parse(time.RFC3339, pasttimestr)
-	raceStatus := getRaceStatus(tm)
+	raceStatus := getRaceStatus(tm.UTC())
 	assert.Equal(t, STATUS_OPEN, raceStatus)
 }
 
 func Test_Race_Status_Closed(t *testing.T) {
-	raceStatus := getRaceStatus(time.Now())
+	raceStatus := getRaceStatus(time.Now().UTC())
 	assert.Equal(t, STATUS_CLOSED, raceStatus)
 }
 

@@ -1,0 +1,60 @@
+syntax = "proto3";
+package sports;
+
+option go_package = "/sports";
+
+import "google/protobuf/timestamp.proto";
+
+service Sport {
+  // ListEvents will return a collection of all sporting events.
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {}
+}
+
+/* Requests/Responses */
+
+message ListEventsRequest {  
+  ListEventsRequestFilter filter = 1;
+  string orderby = 2;  
+}
+
+// Response to ListEvents call.
+message ListEventsResponse {
+  repeated Event events = 1;
+}
+
+// Filter for listing events.
+message ListEventsRequestFilter {
+  repeated int64 meeting_ids = 1;
+  // Possible values for filtering events are, visible, hidden or show all (default)
+  // enum approach is taken to detect value presence, which is not possible with boolean
+  // as it has false as default value. The service does not know if client wants hidden 
+  // events or its just default false value. With show_all as default value, any other value 
+  // than show_all indicates that it has been set by client. 
+  enum Visibility {
+    SHOW_ALL=0; // default
+    VISIBLE=1;
+    HIDDEN=2;
+  }
+  //optional event visibilty field
+  Visibility optional_event_visibility = 2;    
+}
+/* Resources */
+
+// A event resource.
+message Event {
+  // ID represents a unique identifier for the event.
+  int64 id = 1;
+  // MeetingID represents a unique identifier for the events meeting.
+  int64 meeting_id = 2;
+  // Name is the official name given to the event.
+  string name = 3;
+  // Number represents the number of the event.
+  int64 number = 4;
+  // Visible represents whether or not the event is visible.
+  bool visible = 5;
+  // AdvertisedStartTime is the time the event is advertised to run.
+  google.protobuf.Timestamp advertised_start_time = 6;
+  // The status is simply, `OPEN` if advertised_start_time > current date else `CLOSED`
+  string status = 7;
+}
+

@@ -1,3 +1,46 @@
+## Solution Summary
+
+1. Add another filter to the existing RPC, so we can call `ListRaces` asking for races that are visible only.
+   > We'd like to continue to be able to fetch all races regardless of their visibility, so try naming your filter as logically as possible. https://cloud.google.com/apis/design/standard_methods#list
+
+   ### solution   
+   Race visibility is handled through a filter supported by an enum to detect value presence.
+   Default value is show_all so that the endpoint can still deliver all races regardless of their visibility
+   #### PRs
+   https://github.com/shyampundkar/entain-master/pull/1
+   https://github.com/shyampundkar/entain-master/pull/3
+   
+
+2. We'd like to see the races returned, ordered by their `advertised_start_time`
+   > Bonus points if you allow the consumer to specify an ORDER/SORT-BY they might be after. 
+   ### solution   
+   orderby field is added in ListRacesRequest message for the column to be ordered and its sort order.
+   Bonus point changes: Consumer can specify an ORDER/SORT-BY in the orderby field they might be after by this approach.
+   #### PRs
+   https://github.com/shyampundkar/entain-master/pull/2
+
+3. Our races require a new `status` field that is derived based on their `advertised_start_time`'s. The status is simply, `OPEN` or `CLOSED`. All races that have an `advertised_start_time` in the past should reflect `CLOSED`. 
+   > There's a number of ways this could be implemented. Just have a go!
+   ### solution  
+   Status field is added to Race message and its value is calculated in repository layer, the reason is to have better control over status while dealing with multiple client timezones. Secondly status cannot be persisted computed field as its value depends upon the time the call is made. Client, Server and Database time zone could be different hence changed the time comparison to UTC. 
+   #### PRs
+   https://github.com/shyampundkar/entain-master/pull/4
+   https://github.com/shyampundkar/entain-master/pull/5
+
+4. Introduce a new RPC, that allows us to fetch a single race by its ID.
+   > This link here might help you on your way: https://cloud.google.com/apis/design/standard_methods#get
+   ### solution 
+   A new getrace method has been added which take race id as input and return matching race as a response.
+Otherwise returns 404.
+   #### PRs
+   https://github.com/shyampundkar/entain-master/pull/6
+
+5. Create a `sports` service that for sake of simplicity, implements a similar API to racing. This sports API can be called `ListEvents`. We'll leave it up to you to determine what you might think a sports event is made up off, but it should at minimum have an `id`, a `name` and an `advertised_start_time`.
+
+   ### solution 
+   #### PRs
+
+
 ## Entain BE Technical Test
 
 This test has been designed to demonstrate your ability and understanding of technologies commonly used at Entain. 
@@ -61,7 +104,7 @@ go build && ./api
 4. Make a request for races... 
 
 ```bash
-curl -X "POST" "http://localhost:8000/v1/list-races" \
+curl -X "POST" "http://localhost:8000/v1/listevents" \
      -H 'Content-Type: application/json' \
      -d $'{
   "filter": {}

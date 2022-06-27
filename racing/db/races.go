@@ -18,7 +18,7 @@ type RacesRepo interface {
 	Init() error
 
 	// List will return a list of races.
-	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+	List(filter *racing.ListRacesRequest) ([]*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -43,7 +43,7 @@ func (r *racesRepo) Init() error {
 	return err
 }
 
-func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error) {
+func (r *racesRepo) List(request *racing.ListRacesRequest) ([]*racing.Race, error) {
 	var (
 		err   error
 		query string
@@ -52,14 +52,25 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 
 	query = getRaceQueries()[racesList]
 
-	query, args = r.applyFilter(query, filter)
+	query, args = r.applyFilter(query, request.Filter)
 
+	query = applyOrderBy(query, request.Orderby)
+
+	log.Printf("Query:%v \n", query)
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 
 	return r.scanRaces(rows)
+}
+
+// Apply sorting & ordering clause to the query
+func applyOrderBy(query string, orderBy string) string {
+	if len(strings.TrimSpace(orderBy)) != 0 {
+		query += " ORDER BY " + orderBy
+	}
+	return query
 }
 
 func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFilter) (string, []interface{}) {
@@ -94,9 +105,8 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	return query, args
 }
 
-// Get race visibility filter criteria from the visibility
+// Get race visibility filter criteria from the race_visibility
 func getRaceVisibilityFilter(race_visibility racing.ListRacesRequestFilter_Visibility) string {
-
 	switch race_visibility {
 	case racing.ListRacesRequestFilter_HIDDEN:
 		return "visible = false"

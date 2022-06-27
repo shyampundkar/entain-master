@@ -12,8 +12,9 @@ service Racing {
 
 /* Requests/Responses */
 
-message ListRacesRequest {
+message ListRacesRequest {  
   ListRacesRequestFilter filter = 1;
+  string orderby = 2;  
 }
 
 // Response to ListRaces call.
@@ -35,7 +36,7 @@ message ListRacesRequestFilter {
     HIDDEN=2;
   }
   //optional race visibilty field
-  Visibility optional_race_visibility = 2;  
+  Visibility optional_race_visibility = 2;    
 }
 
 /* Resources */

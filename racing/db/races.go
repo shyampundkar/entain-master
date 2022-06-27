@@ -67,7 +67,6 @@ func (r *racesRepo) List(request *racing.ListRacesRequest) ([]*racing.Race, erro
 
 // Apply sorting & ordering clause to the query
 func applyOrderBy(query string, orderBy string) string {
-
 	if len(strings.TrimSpace(orderBy)) != 0 {
 		query += " ORDER BY " + orderBy
 	}
@@ -106,9 +105,8 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	return query, args
 }
 
-// Get race visibility filter criteria from the visibility
+// Get race visibility filter criteria from the race_visibility
 func getRaceVisibilityFilter(race_visibility racing.ListRacesRequestFilter_Visibility) string {
-
 	switch race_visibility {
 	case racing.ListRacesRequestFilter_HIDDEN:
 		return "visible = false"

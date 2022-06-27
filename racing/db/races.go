@@ -161,7 +161,10 @@ func (m *racesRepo) scanRaces(
 // The status is simply, `OPEN` or `CLOSED`.
 // All races that have an `advertised_start_time` in the past will reflect `CLOSED`.
 func getRaceStatus(advertisedStart time.Time) string {
-	if advertisedStart.After(time.Now()) {
+	// TODO:Get the time zone from consumer
+	// We are comparing with server UTC time.
+	// Ideally we should compare advertisedStart with consumer provided UTC time.
+	if advertisedStart.UTC().After(time.Now().UTC()) {
 		return STATUS_OPEN
 	} else {
 		return STATUS_CLOSED

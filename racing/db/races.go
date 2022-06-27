@@ -98,11 +98,11 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 func getRaceVisibilityFilter(race_visibility racing.ListRacesRequestFilter_Visibility) string {
 
 	switch race_visibility {
-	case racing.ListRacesRequestFilter_hidden:
+	case racing.ListRacesRequestFilter_HIDDEN:
 		return "visible = false"
-	case racing.ListRacesRequestFilter_visible:
+	case racing.ListRacesRequestFilter_VISIBLE:
 		return "visible = true"
-	case racing.ListRacesRequestFilter_show_all:
+	case racing.ListRacesRequestFilter_SHOW_ALL:
 		return ""
 	default:
 		log.Printf("invalid value for filter.RaceVisibility:%v, Type: %T\n", race_visibility, race_visibility)

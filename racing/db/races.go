@@ -2,7 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,6 +26,9 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequest) ([]*racing.Race, error)
+
+	// Get will return a race by id.
+	Get(request *racing.GetRaceRequest) (*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -48,6 +53,34 @@ func (r *racesRepo) Init() error {
 	return err
 }
 
+// Get a race
+func (r *racesRepo) Get(request *racing.GetRaceRequest) (*racing.Race, error) {
+	var clauses []string
+
+	query := getRaceQueries()[racesList]
+
+	clauses = append(clauses, " id="+strconv.FormatInt(request.Id, 10))
+
+	query = applyWhereClause(clauses, query)
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	races, err := r.scanRaces(rows)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(races) == 0 {
+		return nil, errors.New("race not found")
+	}
+
+	return races[0], nil
+}
+
+// List the races
 func (r *racesRepo) List(request *racing.ListRacesRequest) ([]*racing.Race, error) {
 	var (
 		err   error
@@ -103,11 +136,17 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		clauses = append(clauses, raceFilter)
 	}
 
+	query = applyWhereClause(clauses, query)
+
+	return query, args
+}
+
+func applyWhereClause(clauses []string, query string) string {
+
 	if len(clauses) != 0 {
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
-
-	return query, args
+	return query
 }
 
 // Get race visibility filter criteria from the race_visibility

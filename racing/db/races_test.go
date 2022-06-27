@@ -47,3 +47,12 @@ func Test_Race_Status_Closed(t *testing.T) {
 	raceStatus := getRaceStatus(time.Now())
 	assert.Equal(t, STATUS_CLOSED, raceStatus)
 }
+
+func Test_Race_Where_Clause(t *testing.T) {
+	query := "select * from races"
+	whereClause := " WHERE id = 1"
+	var clauses []string
+	clauses = append(clauses, "id = 1")
+	applyWhereClause(clauses, query)
+	assert.Equal(t, query+whereClause, applyWhereClause(clauses, query))
+}

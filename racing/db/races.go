@@ -12,6 +12,11 @@ import (
 	"github.com/shyampundkar/entain-master/racing/proto/racing"
 )
 
+const (
+	STATUS_OPEN   = "OPEN"
+	STATUS_CLOSED = "CLOSED"
+)
+
 // RacesRepo provides repository access to races.
 type RacesRepo interface {
 	// Init will initialise our races repository.
@@ -144,8 +149,21 @@ func (m *racesRepo) scanRaces(
 
 		race.AdvertisedStartTime = ts
 
+		race.Status = getRaceStatus(advertisedStart)
+
 		races = append(races, &race)
 	}
 
 	return races, nil
+}
+
+// race.Status field that is derived based on their race.advertised_start_time`'s.
+// The status is simply, `OPEN` or `CLOSED`.
+// All races that have an `advertised_start_time` in the past will reflect `CLOSED`.
+func getRaceStatus(advertisedStart time.Time) string {
+	if advertisedStart.After(time.Now()) {
+		return STATUS_OPEN
+	} else {
+		return STATUS_CLOSED
+	}
 }

@@ -38,7 +38,9 @@ Otherwise returns 404.
 5. Create a `sports` service that for sake of simplicity, implements a similar API to racing. This sports API can be called `ListEvents`. We'll leave it up to you to determine what you might think a sports event is made up off, but it should at minimum have an `id`, a `name` and an `advertised_start_time`.
 
    ### solution 
+   Add a new sports service listening at TCP port 10000. Added ListEvents api. Configured API Gateway by registering GRPC service endpoints of race and sports service
    #### PRs
+   https://github.com/shyampundkar/entain-master/pull/7
 
 
 ## Entain BE Technical Test
